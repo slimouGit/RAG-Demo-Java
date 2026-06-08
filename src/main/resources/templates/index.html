@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Spring Boot RAG mit Ollama</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            line-height: 1.5;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 16px;
+        }
+
+        input, textarea, button {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            margin-top: 6px;
+        }
+
+        button {
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .box {
+            border: 1px solid #ccc;
+            padding: 16px;
+            margin-top: 24px;
+            border-radius: 6px;
+            background: #f8f8f8;
+        }
+
+        .error {
+            color: #b00020;
+            font-weight: bold;
+        }
+
+        .model {
+            background: #eef5ff;
+        }
+
+        pre {
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Spring Boot RAG mit Ollama</h1>
+
+<div class="box model">
+    <h2>Ollama-Modell</h2>
+
+    <p th:if="${modelError}" class="error" th:text="${modelError}"></p>
+
+    <p th:if="${activeModel}">
+        Verwendetes Modell:
+        <strong th:text="${activeModel}"></strong>
+    </p>
+
+    <div th:if="${models != null and !models.isEmpty()}">
+        <p>Verfügbare lokale Modelle:</p>
+        <ul>
+            <li th:each="m : ${models}" th:text="${m.name()}"></li>
+        </ul>
+    </div>
+</div>
+
+<form method="post" action="/ask" enctype="multipart/form-data">
+    <label for="file">Dokument hochladen (.txt oder .pdf)</label>
+    <input id="file" type="file" name="file" accept=".txt,.pdf" required>
+
+    <label for="question">Frage zum Dokument</label>
+    <textarea id="question" name="question" rows="4" required
+              placeholder="Welche Kernaussage enthält das Dokument?"></textarea>
+
+    <button type="submit">Frage stellen</button>
+</form>
+
+<div th:if="${error}" class="box error">
+    <p th:text="${error}"></p>
+</div>
+
+<div th:if="${answer}" class="box">
+    <h2>Antwort</h2>
+    <pre th:text="${answer}"></pre>
+</div>
+
+<div th:if="${question}" class="box">
+    <h2>Gestellte Frage</h2>
+    <p th:text="${question}"></p>
+</div>
+
+<div th:if="${documentPreview}" class="box">
+    <h2>Dokument-Vorschau</h2>
+    <pre th:text="${documentPreview}"></pre>
+</div>
+
+</body>
+</html>
